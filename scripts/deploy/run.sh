@@ -26,7 +26,7 @@ function deploy () {
   NGINX_CONFIG_FILE="bmcgrath-adonis-api.conf"
   TIMESTAMP=`date +%s`
   KEEP_RELEASES=5
-  BRANCH_NAME="deploy2"
+  BRANCH_NAME="main"
 
   source ~/.nvm/nvm.sh
   
