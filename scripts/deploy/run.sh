@@ -58,7 +58,6 @@ function deploy () {
   #-----------#
   echo_box "Running build"
   echo
-  rm -rf node_modules
   npm install
   echo
   npm run build
@@ -94,7 +93,7 @@ function deploy () {
 
   for DIR in `ls -t ${APP_PATH}/releases`; do
     if [ $INDEX -ge $KEEP_RELEASES ]; then
-      rm -rf "${APP_PATH}/releases/${DIR}" -v
+      rm -rf "${APP_PATH}/releases/${DIR}"
     fi
     INDEX=$((INDEX + 1))
   done
@@ -117,3 +116,4 @@ echo
 ssh "${SERVER}" "$(typeset -f); deploy ${APP_PATH}"
 
 figlet "Finished"
+echo
