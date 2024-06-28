@@ -2,6 +2,7 @@ import type { HttpContext } from '@adonisjs/core/http'
 import mail from '@adonisjs/mail/services/main'
 import env from '#start/env'
 import Post from '#models/post'
+import logger from '@adonisjs/core/services/logger'
 
 const sender = env.get('MAILTRAP_SENDER') || ''
 const recipient = env.get('EMAIL_RECIPIENT') || ''
@@ -11,6 +12,8 @@ export default class PostsController {
    * Display a list of resource
    */
   async index({ response }: HttpContext) {
+    logger.info('Fetching all posts')
+
     const posts = await Post.all()
     return response.status(200).json(posts)
   }
@@ -19,6 +22,8 @@ export default class PostsController {
    * Show individual record
    */
   async show({ params, response }: HttpContext) {
+    logger.info('Fetching post by id %s', params.id)
+
     const post = await Post.find(params.id)
 
     if (post) {
@@ -32,14 +37,19 @@ export default class PostsController {
    * Handle form submission for the create action
    */
   async store({ request, response }: HttpContext) {
+    logger.info('Creating new post')
+
     const { name, address, message } = request.body()
+
     const post = await Post.create({ name, address, message })
 
     const title = `Message from ${name}`
     const reply = `Reply to ${address}`
     const paragraphs = message.split('\n').filter(Boolean)
 
-    await mail.send((message) => {
+    logger.info('Sending mail to %s', recipient)
+
+    mail.send((message) => {
       message
         .to(recipient)
         .from(`"Mailtrap 📧" <${sender}>`)
@@ -55,6 +65,8 @@ export default class PostsController {
    * Handle form submission for the edit action
    */
   async update({ params, request, response }: HttpContext) {
+    logger.info('Fetching post by id %s', params.id)
+
     const post = await Post.find(params.id)
 
     if (post) {
@@ -76,6 +88,8 @@ export default class PostsController {
    * Delete record
    */
   async destroy({ params, response }: HttpContext) {
+    logger.info('Deleting post by id %s', params.id)
+
     const post = await Post.find(params.id)
 
     if (post) {
