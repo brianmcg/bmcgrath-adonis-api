@@ -1,16 +1,28 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  <style>
+    .email { font-family: Montserrat, sans-serif; }
+    .section { text-align: center; padding: 32px; }
+    .header { font-size: 48px; font-weight: 700; }
+    .content { border-top: solid 1px grey; font-size: 24px; border-bottom: solid 1px grey; }
+    .reply {  font-weight: 700; }
+  </style>
 </head>
 <body>
-  <h1>
-     Hello
-  </h1>
-  <div>
-    <p>{{ name }}</p>
-    <p>{{ address }}</p>
-    <p>{{ message }}</p>
-  </div>
+  <div class="email">
+    <div class="section header">
+      <span class="header-text">{{ title }}</span>
+    </div>
+    <div class="section content">
+      @each(p in paragraphs)
+        <p>{{ p }}</p>
+      @end
+    </div>
+    <div class="section reply">
+      <span class="reply">{{ reply }}</span>
+    </div>
+  </div>   
 </body>
 </html>

@@ -6,8 +6,6 @@ import Post from '#models/post'
 const sender = env.get('MAILTRAP_SENDER') || ''
 const recipient = env.get('EMAIL_RECIPIENT') || ''
 
-console.log({ sender, recipient })
-
 export default class PostsController {
   /**
    * Display a list of resource
@@ -37,12 +35,17 @@ export default class PostsController {
     const { name, address, message } = request.body()
     const post = await Post.create({ name, address, message })
 
+    const title = `Message from ${name}`
+    const reply = `Reply to ${address}`
+    const paragraphs = message.split('\n').filter(Boolean)
+
     await mail.send((message) => {
       message
         .to(recipient)
         .from(`"Mailtrap 📧" <${sender}>`)
         .subject(`Mailtrap message from ${name}`)
-        .htmlView('emails/post_email_html', { name, address, message })
+        .textView('emails/post_email_text', { title, paragraphs, reply })
+        .htmlView('emails/post_email_html', { title, paragraphs, reply })
     })
 
     return response.status(201).json(post)
