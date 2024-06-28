@@ -11,7 +11,8 @@
     "test": "node ace test",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "deploy": "sh scripts/deploy/run.sh"
   },
   "imports": {
     "#controllers/*": "./app/controllers/*.js",
