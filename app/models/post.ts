@@ -5,6 +5,15 @@ export default class Post extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
 
+  @column()
+  declare name: string
+
+  @column()
+  declare address: string
+
+  @column()
+  declare message: string
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 
