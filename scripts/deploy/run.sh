@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SERVER=azure
+SERVER=azure # Configured in ~/.ssh/config
 APP_PATH="/home/azureuser/apps/bmcgrath-adonis-api"
 
 function echo_box() {
@@ -63,9 +63,9 @@ function deploy () {
   npm run build
   echo
 
-  #-------------------------#
-  # Run Database Migrations #
-  #-------------------------#
+  #-------------------------------------#
+  # Run database migrations and seeders #
+  #-------------------------------------#
   echo_box "Updating Database"
   echo
   # sudo -u postgres psql -c "CREATE DATABASE bmcgrath_production WITH OWNER = bmcgrath;"
@@ -79,16 +79,21 @@ function deploy () {
   echo_box "Cleaning up"
   echo
 
+  # Move build directory to releases/$TIMESTAMP
   mkdir -p "${APP_PATH}/releases"
   mv "${APP_PATH}/repo/build" "${APP_PATH}/releases/${TIMESTAMP}"
   cd "${APP_PATH}/releases/${TIMESTAMP}"
+
+  # Install production dependencies
   npm ci --omit="dev"
 
+  # Make symlink from latest build to `current` directory
   rm -f "${APP_PATH}/current"
   ln -s "${APP_PATH}/releases/${TIMESTAMP}" "${APP_PATH}/current"
 
   echo
 
+  # Keep the last n releases, remove older ones
   INDEX=0
 
   for DIR in `ls -t ${APP_PATH}/releases`; do
@@ -110,8 +115,6 @@ function deploy () {
 
 figlet "Deploying App"
 echo
-
-# ssh "${SERVER}" "mkdir -p ${APP_PATH}/secrets/ -v" && scp -r ".env.production" "${SERVER}:${APP_PATH}/secrets/.env"
 
 ssh "${SERVER}" "$(typeset -f); deploy ${APP_PATH}"
 
