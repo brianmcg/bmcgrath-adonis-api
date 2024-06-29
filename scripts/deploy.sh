@@ -1,8 +1,9 @@
 #!/bin/bash
 
+APP_NAME=$(basename "$(git rev-parse --show-toplevel)")
 SERVER=azure # Configured in ~/.ssh/config
-APP_PATH="/home/azureuser/apps/bmcgrath-adonis-api"
-DEPLOYER=`whoami`
+APP_PATH="apps/${APP_NAME}"
+DEPLOYER=$(whoami)
 
 function echo_box() {
   content="| ${1} |"
@@ -15,22 +16,19 @@ function echo_box() {
 
   divider="${divider}+"
 
-  echo ${divider}
-  echo ${content}
-  echo ${divider}
+  echo "${divider}"
+  echo "${content}"
+  echo "${divider}"
 }
 
-function deploy () {
+function deploy() {
   DEPLOYER=$1
-  APP_PATH=$2
-  NGINX_AVAILABLE_PATH="/home/azureuser/nginx/sites-available"
-  NGINX_ENABLED_PATH="/home/azureuser/nginx/sites-enabled"
-  NGINX_CONFIG_FILE="bmcgrath-adonis-api.conf"
-  TIMESTAMP=`date +%s`
+  APP_PATH="${HOME}/$2"
+  TIMESTAMP=$(date +%s)
   KEEP_RELEASES=5
   BRANCH_NAME="main"
 
-  source ~/.nvm/nvm.sh
+  source "${HOME}/.nvm/nvm.sh"
   
   #-------------------#
   # Fetch latest code #
@@ -39,16 +37,16 @@ function deploy () {
   echo
 
   if test -d "${APP_PATH}/repo"; then
-    cd "${APP_PATH}/repo"
+    cd "${APP_PATH}/repo" || exit
     git stash && git stash clear
     git checkout main
     git pull
     git checkout "${BRANCH_NAME}"
     git pull origin "${BRANCH_NAME}"
   else
-    cd "${APP_PATH}"
+    cd "${APP_PATH}" || exit
     git clone git@github.com:brianmcg/bmcgrath-adonis-api.git repo
-    cd "${APP_PATH}/repo"
+    cd "${APP_PATH}/repo" || exit
     git checkout "${BRANCH_NAME}"
     git pull origin "${BRANCH_NAME}"
   fi
@@ -84,11 +82,11 @@ function deploy () {
   mkdir -p "${APP_PATH}/releases"
   mv "${APP_PATH}/repo/dist" "${APP_PATH}/releases/${TIMESTAMP}"
 
-  COMMIT=`git log --format="%H" -n 1`
+  COMMIT=$(git log --format="%H" -n 1)
   echo "Branch ${BRANCH_NAME} (at ${COMMIT}) deployed as release ${TIMESTAMP} by ${DEPLOYER}" >> "${APP_PATH}/revisions.log"
 
   # Install production dependencies
-  cd "${APP_PATH}/releases/${TIMESTAMP}"
+  cd "${APP_PATH}/releases/${TIMESTAMP}" || exit
   npm ci --omit="dev"
 
   # Make symlink from latest build to `current` directory
@@ -100,7 +98,7 @@ function deploy () {
   # Keep the last n releases, remove older ones
   INDEX=0
 
-  for DIR in `ls -t ${APP_PATH}/releases`; do
+  for DIR in $(ls -t "${APP_PATH}"/releases); do
     if [ $INDEX -ge $KEEP_RELEASES ]; then
       rm -rf "${APP_PATH}/releases/${DIR}"
     fi
@@ -112,7 +110,7 @@ function deploy () {
   #---------------#
   echo_box "Restarting app"
   echo
-  cd ${APP_PATH}
+  cd "${APP_PATH}" || exit
   pm2 startOrReload ecosystem.config.js --env production
   echo
 }
