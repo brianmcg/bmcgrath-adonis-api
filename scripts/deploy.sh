@@ -59,7 +59,6 @@ function deploy () {
   # Run build #
   #-----------#
   echo_box "Running build"
-  echo
   npm install
   echo
   npm run build
@@ -118,10 +117,10 @@ function deploy () {
   echo
 }
 
-figlet "Deploying App"
+figlet "Deploying App" | lolcatjs
 echo
 
 ssh "${SERVER}" "$(typeset -f); deploy ${DEPLOYER} ${APP_PATH}"
 
-figlet "Finished"
+figlet "Finished" | lolcatjs
 echo

@@ -27,16 +27,14 @@ function prepare () {
   mkdir -p "${APP_PATH}/secrets" -v
   echo
 
-
   cd ${APP_PATH}
   rm -rf repo
   git clone git@github.com:brianmcg/bmcgrath-adonis-api.git repo
 
   cd repo
-  # npm install
+  npm install
   echo
   echo_box "Copying p2 conf file"
-  echo
   cp "${APP_PATH}/repo/config/deploy/p2.conf" "${APP_PATH}/ecosystem.config.js" -v
   echo
 }
