@@ -3,7 +3,7 @@
 SERVER=azure # Configured in ~/.ssh/config
 APP_PATH="/home/azureuser/apps/bmcgrath-adonis-api"
 
-function echo_box() {
+function echo_box_fn() {
   content="| ${1} |"
   length=${#content}-2
   divider="+"
@@ -19,7 +19,7 @@ function echo_box() {
   echo "${divider}"
 }
 
-function prepare () {
+function prepare_fn () {
   APP_PATH=$1
 
   mkdir -p "${APP_PATH}" -v
@@ -32,32 +32,31 @@ function prepare () {
   git clone git@github.com:brianmcg/bmcgrath-adonis-api.git repo
 
   cd repo || exit
-  # npm install
   echo
-  echo_box "Copying p2 conf file"
+  echo_box_fn "Copying p2 conf file"
   cp "${APP_PATH}/repo/config/deploy/p2.conf" "${APP_PATH}/ecosystem.config.js" -v
   echo
 }
 
-figlet "Preparing Deploy Dir"
+npx figlet "Preparing Deploy Dir"  | npx lolcatjs
 echo
 
 #-------------------------------#
 # Create deployment directories #
 #-------------------------------#
-echo_box "Making deploy dirs"
+echo_box_fn "Making deploy dirs"
 echo
 
-ssh "${SERVER}" "$(typeset -f); prepare ${APP_PATH}"
+ssh "${SERVER}" "$(typeset -f); prepare_fn ${APP_PATH}"
 
 #--------------------------#
 # Copy .env file to server #
 #--------------------------#
-echo_box "Copying env file"
+echo_box_fn "Copying env file"
 echo
 
 scp .env.production "${SERVER}:${APP_PATH}/secrets/.env"
 echo
 
-figlet "Finished"
+npx figlet "Finished" | npx lolcatjs
 echo

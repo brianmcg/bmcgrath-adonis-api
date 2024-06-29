@@ -5,7 +5,7 @@ SERVER=azure # Configured in ~/.ssh/config
 APP_PATH="apps/${APP_NAME}"
 DEPLOYER=$(whoami)
 
-function echo_box() {
+function echo_box_fn() {
   content="| ${1} |"
   length=${#content}-2
   divider="+"
@@ -21,11 +21,11 @@ function echo_box() {
   echo "${divider}"
 }
 
-function deploy() {
+function deploy_fn() {
   DEPLOYER=$1
   APP_PATH="${HOME}/$2"
   TIMESTAMP=$(date +%s)
-  KEEP_RELEASES=5
+  KEEP_RELEASES=2
   BRANCH_NAME="main"
 
   source "${HOME}/.nvm/nvm.sh"
@@ -33,7 +33,7 @@ function deploy() {
   #-------------------#
   # Fetch latest code #
   #-------------------#
-  echo_box "Fetching latest code"
+  echo_box_fn "Fetching latest code"
   echo
 
   if test -d "${APP_PATH}/repo"; then
@@ -56,7 +56,7 @@ function deploy() {
   #-----------#
   # Run build #
   #-----------#
-  echo_box "Running build"
+  echo_box_fn "Running build"
   npm install
   echo
   npm run build
@@ -65,7 +65,7 @@ function deploy() {
   #-------------------------------------#
   # Run database migrations and seeders #
   #-------------------------------------#
-  echo_box "Updating Database"
+  echo_box_fn "Updating Database"
   echo
   # sudo -u postgres psql -c "CREATE DATABASE bmcgrath_production WITH OWNER = bmcgrath;"
   ENV_PATH=/home/azureuser/apps/bmcgrath-adonis-api/secrets node ace migration:run --force
@@ -75,7 +75,7 @@ function deploy() {
   #----------#
   # Clean up #
   #----------#
-  echo_box "Cleaning up"
+  echo_box_fn "Cleaning up"
   echo
 
   # Move build directory to releases/$TIMESTAMP
@@ -108,7 +108,7 @@ function deploy() {
   #---------------#
   # Restart pm2   #
   #---------------#
-  echo_box "Restarting app"
+  echo_box_fn "Restarting app"
   echo
   cd "${APP_PATH}" || exit
   pm2 startOrReload ecosystem.config.js --env production
@@ -118,7 +118,7 @@ function deploy() {
 figlet "Deploying App" | lolcatjs
 echo
 
-ssh "${SERVER}" "$(typeset -f); deploy ${DEPLOYER} ${APP_PATH}"
+ssh "${SERVER}" "$(typeset -f); deploy_fn ${DEPLOYER} ${APP_PATH}"
 
 figlet "Finished" | lolcatjs
 echo
