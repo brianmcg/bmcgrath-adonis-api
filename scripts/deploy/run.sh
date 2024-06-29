@@ -81,7 +81,7 @@ function deploy () {
 
   # Move build directory to releases/$TIMESTAMP
   mkdir -p "${APP_PATH}/releases"
-  mv "${APP_PATH}/repo/build" "${APP_PATH}/releases/${TIMESTAMP}"
+  mv "${APP_PATH}/repo/dist" "${APP_PATH}/releases/${TIMESTAMP}"
   cd "${APP_PATH}/releases/${TIMESTAMP}"
 
   # Install production dependencies
