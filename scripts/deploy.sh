@@ -25,7 +25,7 @@ function deploy_fn() {
   DEPLOYER=$1
   APP_PATH="${HOME}/$2"
   TIMESTAMP=$(date +%s)
-  KEEP_RELEASES=2
+  KEEP_RELEASES=3
   BRANCH_NAME="main"
 
   source "${HOME}/.nvm/nvm.sh"
@@ -96,13 +96,13 @@ function deploy_fn() {
   echo
 
   # Keep the last n releases, remove older ones
-  INDEX=0
-
-  for DIR in $(ls -t "${APP_PATH}"/releases); do
-    if [ $INDEX -ge $KEEP_RELEASES ]; then
-      rm -rf "${APP_PATH}/releases/${DIR}"
+  INDEX=$(find "${APP_PATH}/releases" -mindepth 1 -maxdepth 1 | wc -l)
+ 
+  for DIR in "${APP_PATH}"/releases/*; do
+    if [ "${INDEX}" -gt "${KEEP_RELEASES}" ]; then
+      rm -rf "${DIR}"
     fi
-    INDEX=$((INDEX + 1))
+    INDEX=$((INDEX-1))
   done
 
   #---------------#
