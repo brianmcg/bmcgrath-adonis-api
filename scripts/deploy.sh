@@ -2,6 +2,7 @@
 
 SERVER=azure # Configured in ~/.ssh/config
 APP_PATH="/home/azureuser/apps/bmcgrath-adonis-api"
+DEPLOYER=`whoami`
 
 function echo_box() {
   content="| ${1} |"
@@ -20,7 +21,8 @@ function echo_box() {
 }
 
 function deploy () {
-  APP_PATH=$1
+  DEPLOYER=$1
+  APP_PATH=$2
   NGINX_AVAILABLE_PATH="/home/azureuser/nginx/sites-available"
   NGINX_ENABLED_PATH="/home/azureuser/nginx/sites-enabled"
   NGINX_CONFIG_FILE="bmcgrath-adonis-api.conf"
@@ -82,9 +84,12 @@ function deploy () {
   # Move build directory to releases/$TIMESTAMP
   mkdir -p "${APP_PATH}/releases"
   mv "${APP_PATH}/repo/dist" "${APP_PATH}/releases/${TIMESTAMP}"
-  cd "${APP_PATH}/releases/${TIMESTAMP}"
+
+  COMMIT=`git log --format="%H" -n 1`
+  echo "Branch ${BRANCH_NAME} (at ${COMMIT}) deployed as release ${TIMESTAMP} by ${DEPLOYER}" >> "${APP_PATH}/revisions.log"
 
   # Install production dependencies
+  cd "${APP_PATH}/releases/${TIMESTAMP}"
   npm ci --omit="dev"
 
   # Make symlink from latest build to `current` directory
@@ -116,7 +121,7 @@ function deploy () {
 figlet "Deploying App"
 echo
 
-ssh "${SERVER}" "$(typeset -f); deploy ${APP_PATH}"
+ssh "${SERVER}" "$(typeset -f); deploy ${DEPLOYER} ${APP_PATH}"
 
 figlet "Finished"
 echo

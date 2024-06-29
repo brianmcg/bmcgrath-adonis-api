@@ -12,7 +12,8 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
-    "deploy": "sh scripts/deploy/run.sh"
+    "deploy": "sh scripts/deploy.sh",
+    "prepare": "sh scripts/prepare.sh"
   },
   "imports": {
     "#controllers/*": "./app/controllers/*.js",

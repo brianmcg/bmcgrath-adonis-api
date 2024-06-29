@@ -20,19 +20,23 @@ function echo_box() {
 }
 
 function prepare () {
-	APP_PATH=$1
+  APP_PATH=$1
 
-	mkdir -p "${APP_PATH}"
-	mkdir -p "${APP_PATH}/releases"
-	mkdir -p "${APP_PATH}/secrets"
-	
-	cd ${APP_PATH}
+  mkdir -p "${APP_PATH}" -v
+  mkdir -p "${APP_PATH}/releases" -v
+  mkdir -p "${APP_PATH}/secrets" -v
+  echo
 
-	rm -rf repo
+  cd ${APP_PATH}
+  rm -rf repo
   git clone git@github.com:brianmcg/bmcgrath-adonis-api.git repo
+  cd repo
+  npm install
+  
+  echo
 }
 
-figlet "Prepare deployment"
+figlet "Preparing Deploy Dir"
 echo
 
 #-------------------------------#
@@ -49,7 +53,8 @@ ssh "${SERVER}" "$(typeset -f); prepare ${APP_PATH}"
 echo_box "Copying env file"
 echo
 
-scp -r ".env.production" "${SERVER}:${APP_PATH}/secrets/.env" -v
+scp .env.production "${SERVER}:${APP_PATH}/secrets/.env"
+echo
 
 figlet "Finished"
 echo
