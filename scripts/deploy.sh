@@ -115,10 +115,10 @@ function deploy_fn() {
   echo
 }
 
-figlet "Deploying App" | lolcatjs
+npx figlet "Deploying App" | npx lolcatjs
 echo
 
 ssh "${SERVER}" "$(typeset -f); deploy_fn ${DEPLOYER} ${APP_PATH}"
 
-figlet "Finished" | lolcatjs
+npx figlet "Finished" | npx lolcatjs
 echo

@@ -3,7 +3,7 @@
 SERVER=azure # Configured in ~/.ssh/config
 APP_PATH="/home/azureuser/apps/bmcgrath-adonis-api"
 
-function echo_box_fn() {
+function echo_box_fn () {
   content="| ${1} |"
   length=${#content}-2
   divider="+"
