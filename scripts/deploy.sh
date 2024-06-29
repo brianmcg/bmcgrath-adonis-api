@@ -68,8 +68,8 @@ function deploy_fn() {
   echo_box_fn "Updating Database"
   echo
   # sudo -u postgres psql -c "CREATE DATABASE bmcgrath_production WITH OWNER = bmcgrath;"
-  ENV_PATH=/home/azureuser/apps/bmcgrath-adonis-api/secrets node ace migration:run --force
-  ENV_PATH=/home/azureuser/apps/bmcgrath-adonis-api/secrets node ace db:seed
+  ENV_PATH="${APP_PATH}/secrets" node ace migration:run --force
+  ENV_PATH="${APP_PATH}/secrets" node ace db:seed
   echo
 
   #----------#
@@ -82,9 +82,6 @@ function deploy_fn() {
   mkdir -p "${APP_PATH}/releases"
   mv "${APP_PATH}/repo/dist" "${APP_PATH}/releases/${TIMESTAMP}"
 
-  COMMIT=$(git log --format="%H" -n 1)
-  echo "Branch ${BRANCH_NAME} (at ${COMMIT}) deployed as release ${TIMESTAMP} by ${DEPLOYER}" >> "${APP_PATH}/revisions.log"
-
   # Install production dependencies
   cd "${APP_PATH}/releases/${TIMESTAMP}" || exit
   npm ci --omit="dev"
@@ -93,6 +90,9 @@ function deploy_fn() {
   rm -f "${APP_PATH}/current"
   ln -s "${APP_PATH}/releases/${TIMESTAMP}" "${APP_PATH}/current"
 
+  # Update revisions.log
+  COMMIT=$(git log --format="%H" -n 1)
+  echo "Branch ${BRANCH_NAME} (at ${COMMIT}) deployed as release ${TIMESTAMP} by ${DEPLOYER}" >> "${APP_PATH}/revisions.log"
   echo
 
   # Keep the last n releases, remove older ones
