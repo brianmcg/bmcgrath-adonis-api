@@ -2,6 +2,7 @@ import type { HttpContext } from '@adonisjs/core/http'
 import mail from '@adonisjs/mail/services/main'
 import env from '#start/env'
 import Post from '#models/post'
+import { createPostValidator, updatePostValidator } from '#validators/post'
 
 const sender = env.get('MAILTRAP_SENDER', '')
 const recipient = env.get('EMAIL_RECIPIENT', '')
@@ -39,9 +40,11 @@ export default class PostsController {
   async store({ logger, request, response }: HttpContext) {
     logger.info('Creating new post')
 
-    const { name, address, message } = request.body()
+    const payload = await request.validateUsing(createPostValidator)
 
-    const post = await Post.create({ name, address, message })
+    const post = await Post.create(payload)
+
+    const { name, address, message } = payload
 
     const title = `Message from ${name}`
     const reply = `Reply to ${address}`
@@ -70,11 +73,11 @@ export default class PostsController {
     const post = await Post.find(params.id)
 
     if (post) {
-      const { name, address, message } = request.body()
+      const payload = await request.validateUsing(updatePostValidator)
 
-      post.name = name
-      post.address = address
-      post.message = message
+      post.name = payload.name
+      post.address = payload.address
+      post.message = payload.message
 
       await post.save()
 

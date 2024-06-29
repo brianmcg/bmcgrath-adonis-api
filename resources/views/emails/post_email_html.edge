@@ -13,15 +13,15 @@
 <body>
   <div class="email">
     <div class="section header">
-      <span class="header-text">{{ title }}</span>
+      <span class="header-text">{{{ title }}}</span>
     </div>
     <div class="section content">
       @each(p in paragraphs)
-        <p>{{ p }}</p>
+        <p>{{{ p }}}</p>
       @end
     </div>
     <div class="section reply">
-      <span class="reply">{{ reply }}</span>
+      <span class="reply">{{{ reply }}}</span>
     </div>
   </div>   
 </body>
