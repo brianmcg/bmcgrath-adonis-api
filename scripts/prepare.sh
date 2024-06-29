@@ -42,14 +42,15 @@ function prepare_fn () {
   cd "${APP_PATH}" || exit
   rm -rf repo
   git clone git@github.com:brianmcg/bmcgrath-adonis-api.git repo
+  echo
 
   #--------------------#
   # Copy pm2 conf file #
   #--------------------#
-  cd repo || exit
-  echo
   echo_box_fn "Copying p2 conf file"
   echo
+  
+  cd repo || exit
   cp "${APP_PATH}/repo/config/deploy/p2.conf" "${APP_PATH}/ecosystem.config.js" -v
   echo
 }
