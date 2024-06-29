@@ -22,29 +22,39 @@ function echo_box_fn () {
 function prepare_fn () {
   APP_PATH=$1
 
+  #-------------------------------#
+  # Create deployment directories #
+  #-------------------------------#
+  echo_box_fn "Making deploy dirs"
+  echo
+
   mkdir -p "${APP_PATH}" -v
   mkdir -p "${APP_PATH}/releases" -v
   mkdir -p "${APP_PATH}/secrets" -v
+  echo
+
+  #------------------#
+  # Clone repository #
+  #------------------#
+  echo_box_fn "Cloning repo"
   echo
 
   cd "${APP_PATH}" || exit
   rm -rf repo
   git clone git@github.com:brianmcg/bmcgrath-adonis-api.git repo
 
+  #--------------------#
+  # Copy pm2 conf file #
+  #--------------------#
   cd repo || exit
   echo
   echo_box_fn "Copying p2 conf file"
+  echo
   cp "${APP_PATH}/repo/config/deploy/p2.conf" "${APP_PATH}/ecosystem.config.js" -v
   echo
 }
 
 npx figlet "Preparing Deploy Dir"  | npx lolcatjs
-echo
-
-#-------------------------------#
-# Create deployment directories #
-#-------------------------------#
-echo_box_fn "Making deploy dirs"
 echo
 
 ssh "${SERVER}" "$(typeset -f); prepare_fn ${APP_PATH}"

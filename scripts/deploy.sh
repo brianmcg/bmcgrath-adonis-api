@@ -57,6 +57,7 @@ function deploy_fn() {
   # Run build #
   #-----------#
   echo_box_fn "Running build"
+  
   npm install
   echo
   npm run build
@@ -91,7 +92,10 @@ function deploy_fn() {
   ln -s "${APP_PATH}/releases/${TIMESTAMP}" "${APP_PATH}/current"
 
   # Update revisions.log
+  cd "${APP_PATH}/repo" || exit
   COMMIT=$(git log --format="%H" -n 1)
+  echo
+  echo "Branch ${BRANCH_NAME} (at ${COMMIT}) deployed as release ${TIMESTAMP} by ${DEPLOYER}"
   echo "Branch ${BRANCH_NAME} (at ${COMMIT}) deployed as release ${TIMESTAMP} by ${DEPLOYER}" >> "${APP_PATH}/revisions.log"
   echo
 
