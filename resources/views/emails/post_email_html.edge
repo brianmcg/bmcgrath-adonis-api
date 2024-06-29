@@ -3,26 +3,34 @@
 <head>
   <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
   <style>
-    .email { font-family: Montserrat, sans-serif; }
+    .email {
+      font-family: Montserrat,
+      sans-serif;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
     .section { text-align: center; padding: 32px; }
-    .header { font-size: 48px; font-weight: 700; }
-    .content { border-top: solid 1px grey; font-size: 24px; border-bottom: solid 1px grey; }
+    .header { font-size: 48px; font-weight: 700; border-bottom: 2px solid #6e07f3; }
+    .message { font-size: 24px; border-bottom: 2px solid #6e07f3; }
     .reply {  font-weight: 700; }
   </style>
 </head>
 <body>
   <div class="email">
-    <div class="section header">
-      <span class="header-text">{{{ title }}}</span>
-    </div>
-    <div class="section content">
-      @each(p in paragraphs)
-        <p>{{{ p }}}</p>
-      @end
-    </div>
-    <div class="section reply">
-      <span class="reply">{{{ reply }}}</span>
-    </div>
-  </div>   
+    <div>
+      <div class="section header">
+        <span class="header-text">{{{ title }}}</span>
+      </div>
+      <div class="section message">
+        @each(p in paragraphs)
+          <p>{{{ p }}}</p>
+        @end
+      </div>
+      <div class="section reply">
+        <span class="reply">{{{ reply }}}</span>
+      </div>
+    </div>   
+  </div>
 </body>
 </html>
