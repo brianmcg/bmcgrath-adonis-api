@@ -1,11 +1,6 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import mail from '@adonisjs/mail/services/main'
-import env from '#start/env'
 import Post from '#models/post'
 import { createPostValidator, updatePostValidator } from '#validators/post'
-
-const sender = env.get('MAILTRAP_SENDER', '')
-const recipient = env.get('EMAIL_RECIPIENT', '')
 
 export default class PostsController {
   /**
@@ -43,23 +38,6 @@ export default class PostsController {
     const payload = await request.validateUsing(createPostValidator)
 
     const post = await Post.create(payload)
-
-    const { name, address, message } = payload
-
-    const title = `Message from ${name}`
-    const reply = `Reply to ${address}`
-    const paragraphs = message.split('\n').filter(Boolean)
-
-    logger.info('Sending mail to %s', recipient)
-
-    mail.send((message) => {
-      message
-        .to(recipient)
-        .from(`"Mailtrap 📧" <${sender}>`)
-        .subject(`Mailtrap message from ${name}`)
-        .textView('emails/post_email_text', { title, paragraphs, reply })
-        .htmlView('emails/post_email_html', { title, paragraphs, reply })
-    })
 
     return response.status(201).json(post)
   }
