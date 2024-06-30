@@ -6,10 +6,16 @@ export default class PostsController {
   /**
    * Display a list of resource
    */
-  async index({ logger, response }: HttpContext) {
-    logger.info('Fetching all posts')
+  async index({ logger, request, response }: HttpContext) {
+    logger.info('Fetching posts')
 
-    const posts = await Post.all()
+    const { name, address } = request.qs()
+    const query = Post.query()
+
+    if (name) query.where({ name })
+    if (address) query.where({ address })
+
+    const posts = await query.finally()
 
     return response.status(200).json(posts)
   }
