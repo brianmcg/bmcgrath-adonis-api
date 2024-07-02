@@ -66,7 +66,7 @@ ssh "${SERVER}" "$(typeset -f); prepare_fn ${APP_PATH}"
 echo_box_fn "Copying env file"
 echo
 
-scp .env.production "${SERVER}:${APP_PATH}/secrets/.env"
+scp .env.production "${SERVER}:${APP_PATH}/secrets/.env.local"
 echo
 
 npx figlet "Finished" | npx lolcatjs
